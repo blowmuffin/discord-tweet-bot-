@@ -1,0 +1,46 @@
+name: Tweet Poller
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'   # Every 10 minutes
+  workflow_dispatch:           # Allow manual trigger from GitHub UI
+
+jobs:
+  poll:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write          # Needed to commit state.json back
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run bot
+        env:
+          TWITTER_BEARER_TOKEN: ${{ secrets.TWITTER_BEARER_TOKEN }}
+          DISCORD_WEBHOOK_URL:  ${{ secrets.DISCORD_WEBHOOK_URL }}
+          DISCORD_WEBHOOK_MY_TWEETS: ${{ secrets.DISCORD_WEBHOOK_MY_TWEETS }}
+          DISCORD_WEBHOOK_OTHERS:    ${{ secrets.DISCORD_WEBHOOK_OTHERS }}
+          MY_TWITTER_USERNAME:  ${{ secrets.MY_TWITTER_USERNAME }}
+          TWITTER_ACCOUNTS:     ${{ secrets.TWITTER_ACCOUNTS }}
+          DISCORD_ERROR_WEBHOOK_URL:  ${{ secrets.DISCORD_ERROR_WEBHOOK_URL }}
+          INCLUDE_RETWEETS: 'false'
+          INCLUDE_REPLIES:  'false'
+        run: node src/index.js
+
+      - name: Commit updated state
+        run: |
+          git config user.name  "Tweet Bot"
+          git config user.email "bot@noreply.github.com"
+          git add state.json
+          git diff --staged --quiet || git commit -m "chore: update tweet state [skip ci]"
+          git push

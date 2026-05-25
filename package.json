@@ -1,0 +1,17 @@
+{
+  "name": "twitter-discord-bot",
+  "version": "1.0.0",
+  "description": "Polls Twitter/X accounts and posts new tweets to Discord via webhooks. Runs free on GitHub Actions.",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "node src/index.js"
+  },
+  "keywords": ["twitter", "discord", "bot", "webhook", "github-actions"],
+  "license": "MIT",
+  "dependencies": {
+    "twitter-api-v2": "^1.17.0",
+    "axios": "^1.6.7",
+    "dotenv": "^16.4.1"
+  }
+}
