@@ -12,7 +12,7 @@
  *   3. Save updated state to disk
  *   4. Post daily digest if the current run is the first of a new UTC day
  *
- * Designed to run as a GitHub Actions cron job (every ~10 minutes).
+ * Designed to run as a GitHub Actions cron job (every ~8 hours).
  */
 
 require('dotenv').config();
